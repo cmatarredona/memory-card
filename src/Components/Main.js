@@ -4,25 +4,21 @@ const Main=()=>{
     const [pokemons,setPokemons]=useState([]);
     const [difficult,setDifficult]=useState(1);
     const [selectedPokemons,setSelectedPokemons]=useState([]);
-    //REVISAR
+    const [record,setRecord]=useState(0);
     const checkSelection=(selection)=>{
-        var selected=false;
-        if(selectedPokemons.length!=0){
-            console.log("R");
-            selected=selectedPokemons.reduce((prev,cur)=>{
-                return cur==selection?true:false;
-            });
-            console.log("aa")
-            console.log(selected);
-            console.log("aa")
-        }
-        console.log(selectedPokemons);
-        console.log("---")
-        console.log(selected);
-        if(!selected)setSelectedPokemons([...selectedPokemons,selection]);
-        if(selected)console.log("Ya está seleccionado")
-        else console.log("Aún no está seleccionado")
-        //if()
+        const selected=selectedPokemons.filter(pokemon=>pokemon==selection);
+        if(selected.length==0)setSelectedPokemons([...selectedPokemons,selection]);
+        else loseMatch();
+        if(pokemons.length==selectedPokemons.length)winLevel();
+    }
+    const winLevel=()=>{
+        setSelectedPokemons([]);
+        setDifficult(difficult+1);
+    }
+    const loseMatch=()=>{
+        setSelectedPokemons([]);
+        if(record<difficult)setRecord(difficult-1);
+        setDifficult(1);
     }
     const shuffleArray = (array) => {
         return [...array].sort(() => Math.random() - 0.5)
@@ -39,9 +35,14 @@ const Main=()=>{
         }
         setPokemons(shuffleArray(pokemons));
     },[difficult]);
+    useEffect(()=>{
+        setPokemons(shuffleArray(pokemons));
+    },[selectedPokemons])
     return(
         <React.Fragment>
-            <button onClick={()=>{setDifficult(difficult+1)}}>asa</button>
+            <h1>Memory card</h1>
+            <h3>Récord {record}</h3>
+            <h3>Dificultad {difficult}</h3>
             <Cards pokemons={pokemons} check={checkSelection}></Cards>
         </React.Fragment>
     );
